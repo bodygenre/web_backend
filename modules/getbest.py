@@ -2,6 +2,7 @@ from flask import jsonify
 from urllib.parse import unquote
 import requests
 import urllib
+import base64
 
 def dosearch(tracker, q, minseeds=2):
     print("query:", tracker, q)
