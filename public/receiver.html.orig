@@ -1,0 +1,71 @@
+<link href="https://vjs.zencdn.net/7.15.4/video-js.css" rel="stylesheet" />
+
+<style type="text/css">
+body { background-color: #111; margin: 0; padding: 0; }
+#castbutton { display: block; height: 30px; position: fixed; right: 0; top: 0; padding: 5px; z-index: 1000; }
+.video-js { width: 100%; height: 100%; }
+video { width: 100%; }
+</style>
+
+<video id="stream-video" width="100%" class="video-js vjs-default-skin" controls>
+</video>
+
+<script src="video.min.js"></script>
+<script src="videojs-contrib-hls.min.js"></script>
+<script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+
+
+
+
+
+
+
+
+
+/**
+ * BEGIN HACK
+ */
+const context = cast.framework.CastReceiverContext.getInstance();
+context.start()
+
+const playerManager = cast.framework.CastReceiverContext.getInstance().getPlayerManager();
+setInterval(() => {
+  const message = new cast.framework.messages.LoadRequestData();
+  message.media.contentId = 'https://example.com/fake/z00123.pic-o-me.jpg';
+  playerManager.load(message).then(() => {}).catch((err) => {return;});
+}, 90000);
+/**
+ * END HACK
+ */
+
+var retrypid;
+
+var player = videojs('stream-video');
+function playStream() {
+  jQuery.get("https://bodygen.re:8080/api/status").done(function(e,i)  {
+    if (e.online) {
+      player.src({
+        src: "https://bodygen.re:8080/hls/0/stream.m3u8",
+        type: "application/x-mpegURL"
+      });
+      player.play();
+      player.enterFullWindow();
+      clearInterval(retrypid);
+    }
+  });
+}
+
+retrypid = setInterval(function() {
+  playStream();
+}, 2000);
+
+playStream();
+
+player.on('ended', function() {
+  retrypid = setInterval(function() {
+    playStream();
+  }, 2000);
+})
+</script>

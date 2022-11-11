@@ -1,0 +1,14 @@
+<h2>{{ movies | length }} seen</h2>
+<h4>Movies per day to reach 2000 goal: <b>{{ "%.1f"|format(movies_per_day) }}</b> mov/day</h4>
+<!--
+<h4>Days left: <b>{{ "%1.f"|format(days_left) }}</b> days</h4>
+<h4>^^ for xmas: <b>{{ "%.1f"|format(xmas) }}</b> mov/day</h4>
+<h4>Days left until xmas: <b>{{ "%1.f"|format(xmas_days_left) }}</b> days</h4>
+
+<h4>Days left: <b>{{ "%1.f"|format(days_left) }}</b> days</h4>
+-->
+<ol>
+  {% for movie in movies %}
+    <li>{{ movie }}</li>
+  {% endfor %}
+</ol>

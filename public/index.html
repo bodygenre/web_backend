@@ -1,0 +1,389 @@
+1<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<html>
+<head>
+	<title>Video Junki.es</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+	<style type="text/css">
+html {
+	background-color: #272727;
+}
+body {
+	zoom: 1.5;
+}
+#blaake_resources {
+	font-family: "Roboto",arial,sans-serif;
+	background: linear-gradient(94deg, rgba(41,41,41,1) 2%, rgba(39,39,39,1) 47%, rgba(40,40,40,1) 97%);
+}
+#blaake_resources table th, #blaake_resources table td {
+	padding: 4px;
+}
+#blaake_resources h1 {
+	margin: -20px 0 0 0;
+	text-align: center;
+	color: #fe8;
+    text-shadow: 0px 0px 2px #b08f26;
+	font-size: 20px;
+}
+#blaake_resources section {
+	text-align: center;
+	padding-top: 1em;
+}
+#blaake_resources section p {
+	vertical-align: top;
+	text-align: center;
+	color: #a0a0a0;
+	width: 8em;
+	display: inline-block;
+}
+#blaake_resources section p a.shortlink {
+	display: block;
+	background-color: #0a6a56;
+	background: linear-gradient(144deg, rgba(1,94,48,1) 2%, rgba(10,106,67,1) 49%, rgba(1,98,46,1) 97%);
+	border-radius: 1em;
+	border: 0.15em double #d4af37;
+	color: #d4af37;
+	text-align: center;
+	font-size: 1.5em;
+	padding: 0.5em;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	-o-transition: all 0.5s;
+	transition: all 0.5s;
+	cursor: pointer;
+	margin: 0.2em;
+	text-shadow: 0px 0px 5px #b08f26;
+    box-shadow: 0px 0px 5px #b08f26;
+}
+#blaake_resources section p .credentials {
+	display: block;
+	color: #a82b11;
+	font-weight: bold;
+}
+#searching table {
+	background-color: #a0a0a0;
+	font-size: 0.5em;
+}
+#searching #search { width: 60%; background: transparent; border-color: #a0a0a0; color: #a0a0a0; font-size: 16px; }
+#searching #search::placeholder { color: #a0a0a0; }
+#searching table { margin-top: 1em; }
+#searching #search_btn { background-color: #a0a0a0; border: none; }
+#searching table.existing tr td.actions { width: 65px; vertical-align: middle; }
+#searching table.existing tr span.b,
+#searching table.existing tr span.stream,
+#searching table.existing tr span.download
+		{ cursor: pointer; float: right; padding: 0 3px; }
+#searching table.search tr { cursor: pointer; }
+#searching table.search tr.downloading { background-color: #0a6a56; }
+#searching table.search tr.active  { 
+	background-color: #98CADD; 	
+}
+		
+#searching table.search tr.active progress::-webkit-progress-value {
+	background-color: #eee !important;		
+}
+#searching table.search tr.active td { background-color: transparent; }
+#searching table.search tr.works { background-color: #d4af37; }
+#searching table.search tr.failed { background-color: #a82b11; }
+#stream h5 { text-align: center; color: gray; }
+iframe { display: block; margin: 0 auto; 
+		 width: 100%; resize: both; overflow: auto; border: 3px solid #222; aspect-ratio: 784 / 625; }
+	</style>
+</head>
+<body id="blaake_resources">
+<h1>Video Junki.es</h1>
+
+<!--
+<div id="stream">
+	<iframe 
+	  src="https://bodygen.re:8081/public/myindex.html" 
+	  title="VideoJunkies Stream" 
+	  referrerpolicy="origin" 
+	  scrolling="no"
+	  allowfullscreen > 
+	</iframe>
+	<h5 id="current_title"> . </h5>
+	<h5 id="current_times"> . </h5>
+</div>
+-->
+<section id="searching">
+	<input id="search" placeholder="Search for more content!" /> <button id="search_btn">Search</button>
+<section>
+<!--
+	<p><a class="shortlink" target="_new" href="http://tetsuharu.ap6r0.bysh.me/couchpotato/">movies</a><span class="credentials">u: tetsuharu<br/>p: friendship</span></p>
+-->
+	<p><a class="shortlink" target="_tv1" href="http://tetsuharu.ap6r0.bysh.me/sonarr">tv</a><span class="credentials">u: tetsuharu<br/>p: friendship</span></p>
+	<p><a class="shortlink" target="_torrents" href="http://tetsuharu.ap6r0.bysh.me/deluge">torrents</a><span class="credentials">u: &lt;none&gt;<br/>p: friendship</span></p>
+	<p><a class="shortlink" target="_files" href="http://tetsuharu.ap6r0.bysh.me/filebrowser/login?redirect=%2Ffiles%2F">files</a><span class="credentials">u: tetsuharu<br/>p: friendship</span></p>
+<!--
+	<p><a class="shortlink" target="_new" href="https://app.plex.tv/">plex</a><span class="credentials"><a href="https://docs.google.com/forms/d/e/1FAIpQLSdMc-6f4ISAgdkNeNUV3R1qsnzb1yYJr6snw77eYNbbksFLMw/viewform">request access</a></p>
+-->
+	<p><a class="shortlink" target="_calendar" href="https://calendar.google.com/calendar/embed?src=f9g8hacuqf2qt8cbblsor1h14o%40group.calendar.google.com&ctz=America%2FLos_Angeles">calendar</a></p>
+	<p><a class="shortlink" target="_stream" href="https://discord.gg/rppE5abw">discord</a></p>
+		
+</section>
+
+	<table class='table existing'>
+		<thead><tr><th>Existing File</th><th></th></tr></thead>
+		<tbody></tbody>
+	</table>
+	<table class='table search'>
+		<thead><tr><th>Name</th><th>Size (gb)</th><th>Ratio (l:s)</th></tr></thead>
+		<tbody></tbody>
+	</table>
+</section>
+</body>
+
+<script type="text/javascript">
+	jQuery.get('https://bodygen.re:8081/last_search').done(function(e) {
+		jQuery('#search').val(e.last_query);
+		searchTPB(e.last_query);
+		searchExisting(e.last_query);
+	});
+	
+	if ((/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()))) {
+		//stream.children[0].remove()
+	}
+
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+	
+	function buildTable(data) {
+	  body = jQuery('#searching table.search tbody');
+	  h = ""
+	  for (var i in data) {
+	  	h += "<tr info_hash=" + data[i].info_hash + "><td>" + data[i].name + "</td><td>" + (Math.floor(data[i].size/1024/1024)/1000) + "</td><td>" + data[i].leechers + ":" + data[i].seeders + "</td></tr>";
+	  }
+	  body[0].innerHTML = h;
+	  jQuery('#searching table.search tbody tr').click(function(e) { 
+	  	target = jQuery(e.currentTarget);
+	  	info_hash = target[0].getAttribute('info_hash');
+	  	window.e=e;
+	  	target.addClass('downloading');
+	  	jQuery.get("https://bodygen.re:8081/add_torrent/" + btoa(info_hash)).done(function(d) {
+	  		target.removeClass('downloading')
+	  		target.removeClass('failed')
+	  		target.addClass('works')
+	  	}).fail(function(d) {
+	  		target.removeClass('downloading')
+	  		target.removeClass('works')
+	  		target.addClass('failed')
+	  	});
+	  })
+	}
+	
+	function buildExistingTable(data) {
+	  body = jQuery('#searching table.existing tbody');
+	  h = ""
+	  for (var i in data.matches) {
+		n = data.matches[i]
+		if (n.startsWith('B Movies/')) {
+			n = n.substr(9);
+			type = 'b';
+		}
+		if (n.startsWith('Movies/')) {
+			n = n.substr(7);
+			type = 'movie';
+		}
+		if (n.startsWith('TV Shows/')) {
+			n = n.substr(9);
+			type = 'tv'
+		}
+	  	h += "<tr><td class='name'>" + n + "</td><td class='actions'><span class='stream'>🎬</span><span class='b'>" + (type == 'b' ? "💩" : type == 'movie' ? "🍏" : '📺') + "</span><span class='download'>🔗 </span></tr></tr>";
+	  }
+	  body[0].innerHTML = h;
+	  jQuery('#searching table.existing tbody tr span.b').click(function(e) { 
+		  if (e.currentTarget.textContent == '📺') return;
+		  b_ness = e.currentTarget.textContent == '💩';
+		  moviename = e.currentTarget.parentElement.parentElement.children[0].textContent.replace(/\/.*/,'/'); // get just movie directory name
+		  from_path = (b_ness ? 'B Movies/' : 'Movies/') + moviename;
+		  to_path = (b_ness ? 'Movies/' : 'B Movies/') + moviename;
+		  jQuery.get('https://bodygen.re:8081/move_movie?from='+ from_path + '&to=' + to_path).done(function(i) {
+		  	searchExisting(jQuery('#search').val());
+		  });
+	  })
+	  jQuery('#searching table.existing tbody tr span.stream').click(function(e) {
+		  row = jQuery(e.currentTarget).parents('tr')
+		  type = row.find('.b').text() == '💩' ? 'b' : row.find('.b').text() == '🍏' ? 'movie' : 'tv';
+		  path = (type == 'b' ? 'B Movies/' : type == 'movie' ? 'Movies/' : 'TV Shows/') + row.find('.name').text();
+		  row.find('.name').text("loading video!! wait!");
+		  
+		  jQuery.get('https://bodygen.re:8081/stream_movie?path=' + path).done(function(i) {
+			setTimeout(function(){
+				searchExisting(jQuery('#search').val());
+			}, 7000);
+		  }).fail(function(i) {
+			row.find('.name').text("failed to load video");
+		  });
+	  });
+	  jQuery('#searching table.existing tbody tr span.download').click(function(e) {
+		  row = jQuery(e.currentTarget).parents('tr')
+		  type = row.find('.b').text() == '💩' ? 'b' : row.find('.b').text() == '🍏' ? 'movie' : 'tv';
+		  path = (type == 'b' ? 'B Movies/' : type == 'movie' ? 'Movies/' : 'TV Shows/') + row.find('.name').text();
+		  jQuery.get('https://bodygen.re:8081/make_download_link?path=' + path).done(function(i) {
+			jQuery(e.currentTarget).html("<a target='_blank' href='http://tetsuharu.ap6r0.bysh.me/filebrowser/share/" + i.hash + "'>Share Link</a>");
+		  }).fail(function(i) {
+			jQuery(e.currentTarget).html("failed to make link");
+		  });
+	  });
+	}
+
+	function searchTPB(s) {
+      var trackers = [ "thepiratebay", "rarbg", "iptorrents" ];
+	  body = jQuery('#searching table.search tbody');
+	  body[0].innerHTML = '<tr><td>running query</td><td></td><td></td><td></td></tr>';
+	  besturl = "https://bodygen.re:8081/getbest/" + encodeURIComponent(s)
+      //jQuery.get(besturl);
+      function getFromTracker(tracker, url, query, j, cb) {
+        jQuery.get(url + tracker + "/" + encodeURIComponent(query)).done(function(i) { 
+          i = jQuery(i).filter(function(e,j) { return j.seeders != "0"; }).sort(function(a,b){ return a.seeders > b.seeders; }).toArray()
+          cb(j.concat(i))
+        }).fail(function(i) {
+  	      cb(j)
+          //body[0].innerHTML = '<tr><td>failed to run query</td><td></td><td></td><td></td></tr>';
+        });
+      }
+      var pref = "https://bodygen.re:8081/search/"
+      getFromTracker("thepiratebay", pref, s, [], function(j) {
+        //getFromTracker("rarbg", pref, s, j, function(j) {
+          getFromTracker("iptorrents", pref, s, j, function(j) {
+            buildTable(j);
+            updateActiveTorrents()
+            
+          })
+        //})
+      })
+        
+	}
+	
+	function searchExisting(s) {
+	  body = jQuery('#searching table.existing tbody');
+	  	body[0].innerHTML = '<tr><td>check started</td><td></td><td></td><td></td></tr>';
+	  jQuery.get("https://bodygen.re:8081/search_existing/" + encodeURIComponent(s)).done(function(i) { 
+	    buildExistingTable(i);
+	  }).fail(function(i) {
+	  	body[0].innerHTML = '<tr><td>check failed</td><td></td><td></td><td></td></tr>';
+	  });
+	}
+
+	jQuery('#search').keypress(debounce(function(e) {
+	  if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+	    searchTPB(jQuery('#search').val());
+	    searchExisting(jQuery('#search').val());
+	  }
+	}, 250));
+	jQuery('#search_btn').click(debounce(function(e) {
+		searchTPB(jQuery('#search').val());
+	    searchExisting(jQuery('#search').val());
+	}, 250))
+	function fancyTimeFormat(duration, h, m, s) {   
+		if (!h) h = ":"
+		if (!m) m = "."
+		if (!s) s = ""
+		// Hours, minutes and seconds
+		var hrs = ~~(duration / 3600);
+		var mins = ~~((duration % 3600) / 60);
+		var secs = ~~duration % 60;
+
+		// Output like "1:01" or "4:03:59" or "123:03:59"
+		var ret = "";
+
+		if (hrs > 0) {
+			ret += "" + (""+hrs).padStart(2,'0') + h ;
+		}
+
+		ret += "" + (""+mins).padStart(2,'0') + m ;
+		if (hrs == 0) {
+			ret += "" + (""+secs).padStart(2,'0') + s;
+		}
+		return ret;
+	}
+
+	function updateVlc() {
+		jQuery.get('https://bodygen.re:8081/vlc/current').done(function(e) {
+			jQuery('#current_title').text(e.current_title)
+			// jQuery('#current_times').text(c_timestr + " / " + v_timestr)
+			jQuery('#current_times').text(fancyTimeFormat(e.current_time, 'h', 'm', 's'))
+		});
+	}
+	updateVlc() 
+	
+	eta_history = {}
+	eta_history_averaging_time = 5
+	const avg_eta = (array) => array.reduce((a, b) => a + b) / array.length;
+
+	setInterval(updateVlc, 10000);
+	function updateActiveTorrents() {
+		jQuery.get('https://bodygen.re:8081/get_active_torrents').done(function(e) {
+			for (var i=0; i<e.length; i++) {
+				t = e[i];
+
+				if (!(t.hash in eta_history)) eta_history[t.hash] = []
+				eta_history[t.hash].push(t.eta)
+				if (eta_history[t.hash].length > eta_history_averaging_time) eta_history[t.hash].shift()
+				
+				
+				tr = jQuery('tr[info_hash='+t.hash.toUpperCase()+']');
+				if (tr.length == 0) continue;
+				
+				var torrent_table = tr.parent();
+				tr.detach();
+	  			tr.removeClass('works');
+				tr.addClass('active');
+				pct = Math.floor(t.progress);
+				tr.css({
+					"background": `linear-gradient(120deg, #98CADD, #98CADD ${pct+1}%, #bfbfbf ${pct+2}%)`
+				})
+				if (t.download_payload_rate > 1000000) {
+					speed = (Math.floor(t.download_payload_rate/1024)/1024).toFixed(1) + 'mbps';
+				} else {
+					speed = (t.download_payload_rate/1024).toFixed(1) + 'kbps';
+				}
+				if (t.state == 'Downloading') {
+					tr.find('td')[1].innerText = "ETA: " + fancyTimeFormat(Math.floor(avg_eta(eta_history[t.hash])), 'h', 'm', 's');
+				} else {
+					tr.find('td')[1].innerText = "Complete";
+				}
+				tr.attr('title', speed);
+				torrent_table.prepend(tr);
+			}
+		})
+	}
+	setInterval(updateActiveTorrents, 5000)
+	
+	
+	// parent:
+	iframeEventHandlers = {}
+	iframeEventHandlers['resize'] = function(d) {
+		jQuery('#stream iframe').css('aspect-ratio', '' + d.width + ' / ' + d.height);
+	}
+	var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+	var eventer = window[eventMethod];
+	var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+
+	// Listen to message from child window
+	eventer(messageEvent,function(e) {
+		var key = e.message ? "message" : "data";
+		var data = e[key];
+		if ('message' in e.data && e.data['message'] in iframeEventHandlers) {
+			iframeEventHandlers[e.data['message']](e.data);
+		}
+	},false);
+</script>
+</html>
+

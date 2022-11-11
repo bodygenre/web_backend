@@ -1,0 +1,622 @@
+<style type="text/css">
+table {
+	border: 1px solid;
+}
+table td {
+	border: 1px solid;
+	width: 20px;
+	height: 20px;
+	padding:  2px;
+	color: thistle;
+	max-height:  20px;
+	text-align: center;
+	border-radius: 15px;
+}
+table td.guy {
+	color: white;
+	font-style: bold;
+	background-color: black;
+}
+table td.apple {
+	color:  green;
+	background-color: green;
+}
+table td.wall {
+	color:  transparent;
+	background-color: grey;
+	border-radius: 0;
+}
+table td.empty {
+	color:  white;
+	background-color: white;
+}
+
+#moves {
+	margin:  5px;
+	display: flex;
+}
+#moves ul {
+	list-style:  none;
+	margin: 0;
+	padding: 0;
+	float: left;
+	clear:  left;
+}
+#moves ul li {
+	float:  left;
+}
+
+#gameboard {
+	float:  left;
+	margin: 4px;
+}
+#stuff_though {
+	margin:  4px;
+	float: left;
+}
+#toast {
+	visibility: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 10px;
+	padding: 10px;
+	background: cyan;
+}
+p, span, div, button {
+	font-family:  monospace;
+}
+#info { margin-bottom: 10px; }
+</style>
+
+<title>meta game</title>
+<h1>meta game</h1>
+
+<div id="info">
+	How To: Use arrows keys to move your guy around. You can also press the buttons. As you move your character around, this will recommend commonly used patterns in the Options section. Left-click an Option to add it as a new button. Shift-click a button in the main buttons list to remove it. Right click a button in the main buttons list to make it a "start event", which runs at the start of a game. If you use a one-letter name for custom buttons, you can use your keyboard to use them. The "r" key resets the move history.
+</div>
+
+<div id="results">
+	<span>Total apples: <span id="total_apples"></span></span>
+	<br/>
+	<span>Total wins: <span id="total_game_wins"></span></span>
+	<br/>
+	<span>Average moves: <span id="avg_moves_per_game"></span> all</span>
+	<span>| <span id="avg_moves_last_ten"></span> last10</span>
+	<span>| <span id="avg_moves_last_five"></span> last5</span>
+	<span>| <span id="avg_moves_last"></span> last</span>
+	<br/>
+	<span>Average times: <span id="avg_time_per_game"></span>s all</span>
+	<span>| <span id="avg_time_last_ten"></span>s last10</span>
+	<span>| <span id="avg_time_last_five"></span>s last5</span>
+	<span>| <span id="avg_time_last"></span>s last</span>
+	<br/>
+	<span>Current: <span id="current_moves"></span> <span id="current_time">s</span></span>
+</div>
+
+<div id="toast">
+	<span class="close">x</span>
+	<div class="message"></div>
+</div>
+
+<div id="gameboard"></div>
+
+<div id="stuff_tho">
+	<div>start event: <span id="startevent"></span></div>
+	<div id="buttons">
+		<br/>
+	</div>
+
+	<p>Options:</p>
+	<button id="reset">reset history (r)</button>
+	<button id="restart">restart game (g)</button>
+	<button id="clear_settings">clear settings</button>
+	<div id="moves"></div>
+</div>
+
+<script type="text/javascript">
+
+	var total_apples = 0
+	var total_game_wins = 0
+	var total_games = 0
+	var all_game_counts = []
+	var all_game_times = []
+
+	var names = "abcdefghijklmnopqrstuvwxyz".split("")
+
+	var board = document.getElementById("gameboard")
+	var grid = []
+	var n = 20
+	var guy_y, guy_x;
+	var start_event = "^";
+	var move_count = 0;
+	var start_time;
+
+	var walls_threshold = 10
+	var game_timeout_threshold = 60*10*1000
+	var game_timeout;
+	var numapples = 10
+	var numwalls = 0
+
+	var moves_list = []
+	var move_buttons = {
+		"^": ["up"],
+		"v": ["down"],
+		"<": ["left"],
+		">": ["right"]
+	}
+
+	// initialize grid
+	for (var y=0; y<n; y++) {
+		grid.push(new Array(n));
+	}
+
+	function updateResults() {
+		document.getElementById('total_apples').textContent = total_apples
+		document.getElementById('total_game_wins').textContent = total_game_wins
+		var sum = 0;
+		for (var i of all_game_counts) {
+			sum += i
+		}
+		if (total_game_wins == 0) total_game_wins = 1
+		document.getElementById('avg_moves_per_game').textContent = Math.floor((sum/total_game_wins))
+
+		var sum = 0;
+		for (var i of all_game_counts.slice(-10)) {
+			sum += i
+		}
+		document.getElementById('avg_moves_last_ten').textContent = Math.floor((sum/10))
+
+		var sum = 0;
+		for (var i of all_game_counts.slice(-5)) {
+			sum += i
+		}
+		if (total_game_wins == 0) total_game_wins = 1
+		document.getElementById('avg_moves_last_five').textContent = Math.floor((sum/5))
+		document.getElementById('avg_moves_last').textContent = all_game_counts[all_game_counts.length-1]
+
+		document.getElementById('current_moves').textContent = move_count
+
+
+		var sum = 0;
+		for (var i of all_game_times) {
+			sum += i
+		}
+		if (total_game_wins == 0) total_game_wins = 1
+		document.getElementById('avg_time_per_game').textContent = Math.floor((sum/total_game_wins))
+
+		var sum = 0;
+		for (var i of all_game_times.slice(-10)) {
+			sum += i
+		}
+		document.getElementById('avg_time_last_ten').textContent = Math.floor((sum/10))
+
+		var sum = 0;
+		for (var i of all_game_times.slice(-5)) {
+			sum += i
+		}
+		if (total_game_wins == 0) total_game_wins = 1
+		document.getElementById('avg_time_last_five').textContent = Math.floor((sum/5))
+		document.getElementById('avg_time_last').textContent = all_game_times[all_game_times.length-1]
+
+		document.getElementById('current_time').textContent = ((new Date()) - start_time)/1000
+	}
+	setInterval(updateResults, 100)
+
+	function toast(msg, autoclose) {
+		var t = document.getElementById('toast')
+		var mdiv = t.getElementsByClassName('message')[0]
+		mdiv.innerHTML = msg
+		t.style.visibility = 'visible'
+		if (autoclose != false) {
+			setTimeout(function() {
+				document.getElementById('toast').style.visibility = 'hidden'
+			}, 2000)
+		}
+	}
+
+	// make n x n grid
+	function updateGrid(board, grid) {
+		var tbl = document.createElement("table")
+		for (var y = 0; y < grid.length; y++) {
+			var tr = document.createElement("tr");
+			for (var x = 0; x < grid[y].length; x++) {
+				var td = document.createElement("td")
+				if (grid[y][x] == "#") {
+					td.textContent = "@"
+					td.classList.add("guy")
+				} else if (grid[y][x] == "$"){
+					td.textContent = '*'
+					td.classList.add('apple')
+				} else if (grid[y][x] == "w") {
+					td.textContent = "w"
+					td.classList.add('wall')
+				} else {
+					td.textContent = '.'
+					td.classList.add('empty')
+				}
+				tr.append(td)
+			}
+			tbl.append(tr)
+		}
+		board.innerHTML = "";
+		board.append(tbl)
+	}
+
+
+
+
+	function drawButtons(move_buttons) {
+		var buttons = document.getElementById('buttons')
+		buttons.innerHTML=""
+		for (var name in move_buttons) {
+			var j = move_buttons[name];
+			
+			var btn = document.createElement('button')
+			btn.textContent = name
+			btn.onclick = (function(name) {
+				return function (ev) {
+					if (ev.shiftKey) {
+						// remove button
+						if ("^v<>".includes(name) || name == 'rand' || name == 'near') return
+						delete move_buttons[name]
+						drawButtons(move_buttons)
+						saveState()
+					} else {
+						doMove(name)
+					}
+				}
+			})(name)
+			btn.addEventListener('contextmenu', (function(name) {
+				return function(ev) {
+					var s = document.getElementById('startevent')
+					if (s.textContent == name) {
+						// undo
+						name = '^'
+					}
+					start_event = name
+					document.getElementById('startevent').textContent = name
+					ev.preventDefault()
+				}
+			})(name))
+			buttons.append(btn)
+		}
+	}
+
+
+	function addButton(spec) {
+		if (spec in move_buttons) return;
+		var name = prompt("Choose a name for your new move!")
+		if (name == 'r' || name == 'g') return
+		if (name == null) return
+		// name = names.shift()
+		move_buttons[name] = spec
+		saveState()
+	}
+
+	function updateMoves(moves_list) {
+		var moves = document.getElementById('moves')
+		moves.innerHTML = "";
+
+		// get list of 3-groups
+		for (var n=2; n<=6; n++) {
+			groups = []
+			groupul = document.createElement("ul")
+			for (var i=0; i<moves_list.length - n; i++) {
+				groups.push(moves_list.slice(i, i+n))
+			}
+			// count them, suggest the top 5
+			count_groups = {}
+			for (var g of groups) {
+				s = JSON.stringify(g)
+				if (!(s in count_groups)) count_groups[s] = 0
+				count_groups[s]++
+			}
+			count_groups_arr = []
+			for (var i in count_groups) {
+				// if (count_groups[i] < 3) continue
+				count_groups_arr.push([count_groups[i], i])
+			}
+			count_groups_arr.sort().reverse()
+			best_groups = count_groups_arr.slice(0,10)
+
+			// populate with buttons to add new buttons
+			for (var i of best_groups) {
+				if (i[1] in move_buttons) continue;
+
+				var li = document.createElement('li')
+				var btn = document.createElement('button')
+				btn.textContent = JSON.parse(i[1]).join(" ")
+				btn.onclick = (function(spec) {
+					return function() {
+						addButton(spec)
+						drawButtons(move_buttons)
+					}
+				})(JSON.parse(i[1]))
+				li.append(btn)
+				groupul.prepend(li)
+			}
+			moves.append(groupul)
+		}
+	}
+
+	function setGridGuy(x, y) {
+		move_count++
+
+		if (y >= grid.length || y < 0) return
+		if (x >= grid[0].length || x < 0) return
+
+		if (grid[y][x] == '$') total_apples++
+
+		if (grid[y][x] == 'w') return;
+
+		if (guy_y != null && guy_x != null) grid[guy_y][guy_x] = null
+		guy_y = y 
+		guy_x = x 
+		grid[guy_y][guy_x] = '#'
+
+		updateGrid(board, grid)
+
+		// determine if won
+		if (checkWin(grid)) {
+			toast("level finished!")
+			numapples+3
+			if (total_games >= walls_threshold) {
+				numwalls+=2
+				move_buttons['rand'] = ['random']
+			}
+			if (total_games >= 20) {
+				move_buttons['near'] = ['nearest']
+			}
+			total_game_wins++
+			all_game_times.push(((new Date()) - start_time)/1000)
+			restartGame()
+		}
+	}
+
+	function getMovesRecurse(name, flat) {
+		var spec = move_buttons[name]
+
+		var bottom = {
+			"up": 1,
+			"down": 1,
+			"left": 1,
+			"right": 1,
+			"random": 1,
+			"nearest": 1
+		}
+
+		if (name in bottom)  {
+			flat.push(name)
+			return
+		}
+		
+		for (var name2 of spec) {
+			getMovesRecurse(name2, flat)
+		}
+	}
+
+	var moveTimeouts = []
+	function doMove(name) {
+		moves_list.push(name)
+
+		var flat = []
+		getMovesRecurse(name, flat)
+		var delay = 50 / Math.max(1, (flat.length/50));
+		var n = 0;
+		var prev_total_games = total_games
+		function goDo(flat, delay) {
+			if (flat.length == 0) return
+			f = flat.shift()
+			if (f == "random") {
+				var choice = Math.floor(Math.random()*4)
+				var choices = ["up", "down", "left", "right"]
+				f = choices[choice]
+			}
+			if (f == 'nearest') {
+				// locate nearest apple, go to it
+				// get all apple positions
+				var apple_positions = []
+				for (var y=0; y<grid.length; y++) {
+					for (var x=0; x<grid[y].length; x++) {
+						if (grid[y][x] == '$') {
+							apple_positions.push([x,y])
+						}
+					}
+				}
+				// calculate distances, choose shorted distance
+				if (apple_positions.length == 0) return
+				var min_distance = 100000
+				for (var pos of apple_positions) {
+					var dx = pos[0] - guy_x
+					var dy = pos[1] - guy_y
+					var distance = dx*dx+dy*dy
+					if (distance < min_distance) {
+						min_distance = distance
+						var ax = Math.abs(dx)
+						var ay = Math.abs(dy)
+						if (ax > ay) {
+							f = (dx > 0) ? 'right' : 'left'
+						} else {
+							f = (dy > 0) ? 'down' : 'up'
+						}
+					}
+				}
+
+				// choose shortest distance
+				
+			}
+			if (f == "up") {
+				setGridGuy(guy_x, guy_y-1)
+			} else if (f == "down") {
+				setGridGuy(guy_x, guy_y+1)
+			} else if (f == "left") {
+				setGridGuy(guy_x-1, guy_y)
+			} else if (f == "right") {
+				setGridGuy(guy_x+1, guy_y)
+			}
+			var c = setTimeout((function(flat) {
+				return function() {
+					if (prev_total_games < total_games) {
+						return
+					}
+					goDo(flat); 
+				}
+			})(flat), delay)
+			moveTimeouts.push(c)
+		}
+		goDo(flat, delay)
+		// for (var f of flat) {
+		// 	var c = setTimeout((function(f) {
+		// 		return function() {
+		// 			if (f == "random") {
+		// 				var choice = Math.floor(Math.random()*4)
+		// 				var choices = ["up", "down", "left", "right"]
+		// 				f = choices[choice]
+		// 			}
+		// 			if (f == "up") {
+		// 				setGridGuy(guy_x, guy_y-1)
+		// 			} else if (f == "down") {
+		// 				setGridGuy(guy_x, guy_y+1)
+		// 			} else if (f == "left") {
+		// 				setGridGuy(guy_x-1, guy_y)
+		// 			} else if (f == "right") {
+		// 				setGridGuy(guy_x+1, guy_y)
+		// 			}
+		// 		}
+		// 	})(f), Math.floor(delay) * n)
+		// 	n++
+		// }
+		updateMoves(moves_list)
+		drawButtons(move_buttons)
+		updateResults()
+	}
+
+	function checkWin(grid) {
+		for (var row of grid) {
+			for (var val of row) {
+				if (val == '$') {
+					return false
+				}
+			}
+		}
+		return true
+	}
+
+	function restartGame() {
+		clearTimeout(game_timeout)
+		for (var i of moveTimeouts) {
+			clearTimeout(i)
+		}
+		start_time = new Date()
+		moveTimeouts = []
+		total_games++
+
+		all_game_counts.push(move_count)
+
+		// clear state
+		for (var y=0; y<grid.length; y++) {
+			for (var x=0; x<grid[y].length; x++) {
+				grid[y][x] = null
+			}
+		}
+		// place some apples
+		var capples = numapples
+		while (capples > 0) {
+			var rx = Math.floor(Math.random() * n)
+			var ry = Math.floor(Math.random() * n)
+			if (grid[ry][rx] != null) continue
+			grid[ry][rx] = '$'
+			capples--
+		}
+
+		// place some walls
+		if (total_games >= walls_threshold) {
+			var cwalls = numwalls;
+			while(cwalls > 0) {
+				var rx = Math.floor(Math.random() * n)
+				var ry = Math.floor(Math.random() * n)
+				if (grid[ry][rx] != null) continue
+				grid[ry][rx] = 'w'
+				cwalls--
+			}
+		}
+		
+		// add a guy somewhere
+		setGridGuy(10, 10)
+
+		updateGrid(board, grid)
+		drawButtons(move_buttons)
+		updateResults()
+		move_count = 0
+		doMove(start_event)
+
+		game_timeout = setTimeout(function() {
+			restartGame();
+		}, game_timeout_threshold)
+	}
+
+	function resetHistory() {
+		moves_list = []
+		updateMoves(moves_list)
+	}
+
+	function loadState() {
+		var data = localStorage.getItem('buttons')
+		if (data == null) return
+		move_buttons = JSON.parse(data)
+	}
+	function saveState() {
+		localStorage.setItem('buttons', JSON.stringify(move_buttons))
+	}
+
+	loadState()
+	restartGame()
+
+	document.onkeydown = function(e) {
+		if (e.code == 'ArrowUp') doMove('^')
+		if (e.code == 'ArrowDown') doMove('v')
+		if (e.code == 'ArrowLeft') doMove('<')
+		if (e.code == 'ArrowRight') doMove('>')
+		if (e.key == 'r') {
+			resetHistory()
+		}
+		if (e.key == 'g') {
+			restartGame()
+		}
+		if (e.key in move_buttons) {
+			doMove(e.key)
+		}
+	}
+
+	document.getElementById('reset').onclick = function() {
+		resetHistory()
+	}
+
+	document.getElementById('restart').onclick = function() {
+		restartGame()
+	}
+
+	document.getElementById('clear_settings').onclick = function() {
+		if (!confirm("This will reset all game state (custom moves, scores). Do you want to proceed?")) return
+		resetHistory()
+		total_games = 0
+		total_game_wins = 0
+		total_apples = 0
+		numwalls = 0
+		numapples = 10
+		all_game_counts = []
+		current_moves = 0
+		localStorage.removeItem('buttons')
+		move_buttons = {
+			"^": ["up"],
+			"v": ["down"],
+			"<": ["left"],
+			">": ["right"]
+		}
+		updateMoves(moves_list)
+		drawButtons(move_buttons)
+		restartGame()
+		updateResults()
+	}
+</script>

@@ -1,3 +1,8 @@
 bodygen_re.crt
 bodygen_re.csr
 bodygen_re.key
+*.pyc
+
+pid
+current_movie_url
+kid
