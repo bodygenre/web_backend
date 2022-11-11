@@ -1,2 +1,0 @@
-<p>drag this link into your bookmarks bar to cheat at worlde</p>
-<a href="javascript:alert(JSON.parse(localStorage.gameState).solution)">wordle answer</a>
