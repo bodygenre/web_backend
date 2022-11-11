@@ -1,12 +1,10 @@
-#import asyncio
-#import aiohttp
 import requests
 import base64
 from PIL import Image
 from io import BytesIO
 import random
-import datetime
 import time
+from flask import send_file
 
 def gen_images(query):
     data = {"prompt": query}
@@ -51,10 +49,6 @@ def gen_image_grid(query, retries=2):
 
     try:
         imgs = gen_images(query)
-        #imgs = []
-        #for i in range(9):
-        #    with open(f"millhouse_{i}.png", "rb") as f:
-        #        imgs.append(f.read())
         dest = Image.new('RGB', (734*3, 734*3))
         for i in range(9):
             y = i%3
@@ -76,19 +70,17 @@ def gen_image_grid(query, retries=2):
         
         return None
 
-def main():
-    print("hello")
-    img = gen_image_grid("millhouse batallion")
-    with open('c.png','wb') as f:
-        f.write(img)
-    #for i in range(len(imgs)):
-    #    print(i)
-    #    with open(f"millhouse_{i}.png", "wb") as f:
-    #        f.write(imgs[i])
-    
-    print("done")
-    
-if __name__ == "__main__":
-    main()
+
+def register(app):
+    @app.route('/craiyon')
+    def dalle():
+        q = request.args.get('q')
+        print("dalle", q)
+        img = gen_image(q)
+        fimg = io.BytesIO(img)
+        return send_file(fimg, mimetype="image/png", download_name=f"{q}.png")
+
+
+
 
 
