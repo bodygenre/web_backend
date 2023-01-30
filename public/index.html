@@ -1,12 +1,19 @@
-1<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 <html>
 <head>
-	<title>Video Junki.es</title>
+	<title>bodygen.re - Feel it in ur bonez</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    <script type="text/javascript">
+      jQuery.get('/last_restart', function(rr) {
+        setInterval(function() {
+          jQuery.get('/last_restart', function(r) { if (r != rr) window.location.reload() })
+        }, 5000)
+      })
+    </script>
 	<style type="text/css">
 html {
 	background-color: #272727;
@@ -22,7 +29,7 @@ body {
 	padding: 4px;
 }
 #blaake_resources h1 {
-	margin: -20px 0 0 0;
+	margin: 20px 0 0 0;
 	text-align: center;
 	color: #fe8;
     text-shadow: 0px 0px 2px #b08f26;
@@ -70,7 +77,9 @@ body {
 #searching #search { width: 60%; background: transparent; border-color: #a0a0a0; color: #a0a0a0; font-size: 16px; }
 #searching #search::placeholder { color: #a0a0a0; }
 #searching table { margin-top: 1em; }
+#searching div.existing { height: 120px; overflow-y: auto; }
 #searching #search_btn { background-color: #a0a0a0; border: none; }
+#searching table.existing { margin-bottom: 0; }
 #searching table.existing tr td.actions { width: 65px; vertical-align: middle; }
 #searching table.existing tr span.b,
 #searching table.existing tr span.stream,
@@ -91,10 +100,14 @@ body {
 #stream h5 { text-align: center; color: gray; }
 iframe { display: block; margin: 0 auto; 
 		 width: 100%; resize: both; overflow: auto; border: 3px solid #222; aspect-ratio: 784 / 625; }
+
+      #searched_content { position:absolute; top:0; left:0; padding: 5px}
+      #searched_content .title { color: #999; }
+      #searched_content img { width: 100px; opacity: 20%; position: fixed; pointer-events: none; }
 	</style>
 </head>
 <body id="blaake_resources">
-<h1>Video Junki.es</h1>
+<h1>bodygen.re</h1>
 
 <!--
 <div id="stream">
@@ -116,34 +129,40 @@ iframe { display: block; margin: 0 auto;
 	<p><a class="shortlink" target="_new" href="http://tetsuharu.ap6r0.bysh.me/couchpotato/">movies</a><span class="credentials">u: tetsuharu<br/>p: friendship</span></p>
 -->
 	<p><a class="shortlink" target="_tv1" href="http://tetsuharu.ap6r0.bysh.me/sonarr">tv</a><span class="credentials">u: tetsuharu<br/>p: friendship</span></p>
-	<p><a class="shortlink" target="_torrents" href="http://tetsuharu.ap6r0.bysh.me/deluge">torrents</a><span class="credentials">u: &lt;none&gt;<br/>p: friendship</span></p>
+	<p><a class="shortlink" target="_torrents" href="http://tetsuharu.ap6r0.bysh.me/qbittorrent/">torrents</a><span class="credentials">u: &lt;tetsuharu&gt;<br/>p: friendship</span></p>
 	<p><a class="shortlink" target="_files" href="http://tetsuharu.ap6r0.bysh.me/filebrowser/login?redirect=%2Ffiles%2F">files</a><span class="credentials">u: tetsuharu<br/>p: friendship</span></p>
 <!--
 	<p><a class="shortlink" target="_new" href="https://app.plex.tv/">plex</a><span class="credentials"><a href="https://docs.google.com/forms/d/e/1FAIpQLSdMc-6f4ISAgdkNeNUV3R1qsnzb1yYJr6snw77eYNbbksFLMw/viewform">request access</a></p>
--->
 	<p><a class="shortlink" target="_calendar" href="https://calendar.google.com/calendar/embed?src=f9g8hacuqf2qt8cbblsor1h14o%40group.calendar.google.com&ctz=America%2FLos_Angeles">calendar</a></p>
-	<p><a class="shortlink" target="_stream" href="https://discord.gg/rppE5abw">discord</a></p>
+	<p><a class="shortlink" target="_hgaas" href="https://bodygen.re:8081/public/hgaas.html">hgaas</a></p>
+-->
+	<p><a class="shortlink" target="_stream" href="https://discord.gg/AR23SKAA">discord</a></p>
 		
 </section>
 
-	<table class='table existing'>
+  	<div class='existing'>
+	  <table class='table existing'>
 		<thead><tr><th>Existing File</th><th></th></tr></thead>
 		<tbody></tbody>
-	</table>
+	  </table>
+    </div>
 	<table class='table search'>
 		<thead><tr><th>Name</th><th>Size (gb)</th><th>Ratio (l:s)</th></tr></thead>
 		<tbody></tbody>
 	</table>
 </section>
+  <div id="searched_content"><div class="title">(movie title)</div><div class="stars">🌑🌑🌑🌑🌑</div></div>
 </body>
 
 <script type="text/javascript">
-	jQuery.get('https://bodygen.re:8081/last_search').done(function(e) {
+	/*
+    jQuery.get('https://bodygen.re:8081/last_search').done(function(e) {
 		jQuery('#search').val(e.last_query);
 		searchTPB(e.last_query);
 		searchExisting(e.last_query);
 	});
-	
+	*/
+  
 	if ((/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()))) {
 		//stream.children[0].remove()
 	}
@@ -244,30 +263,46 @@ iframe { display: block; margin: 0 auto;
 	}
 
 	function searchTPB(s) {
-      var trackers = [ "thepiratebay", "rarbg", "iptorrents" ];
+      //var trackers = [ "thepiratebay", "rarbg", "iptorrents" ];
+      var trackers = [ "rarbg", "iptorrents" ];
 	  body = jQuery('#searching table.search tbody');
 	  body[0].innerHTML = '<tr><td>running query</td><td></td><td></td><td></td></tr>';
 	  besturl = "https://bodygen.re:8081/getbest/" + encodeURIComponent(s)
+      
+      jQuery.get("/imdb_info?q=" + s).then(function(e) {
+        var stars = e.rating / 2
+        var starstr = "" + "🌕".repeat(stars) + (stars - Math.floor(stars) > 0 ? "🌗" : "") + "🌑".repeat(5-stars)
+        var str = ""
+        str += "<div class='title'><a href='https://www.imdb.com/title/" + e.movie_id + "'>" + e.movie_title + " (" + e.year + ")</a></div>"
+        str += "<div class='stars'>" + starstr + "</div>"
+        str += "<img src='" + e.image + "' />"
+        jQuery('#searched_content').html(str)
+        
+      })
+      
       //jQuery.get(besturl);
-      function getFromTracker(tracker, url, query, j, cb) {
+      var results = []
+      function finish() {
+        var j = Array.prototype.concat(...results)
+        buildTable(j)
+        updateActiveTorrents()
+      }
+      function getFromTracker(tracker, url, query) {
         jQuery.get(url + tracker + "/" + encodeURIComponent(query)).done(function(i) { 
           i = jQuery(i).filter(function(e,j) { return j.seeders != "0"; }).sort(function(a,b){ return a.seeders > b.seeders; }).toArray()
-          cb(j.concat(i))
+          results.push(i)
+          if (results.length == 3) finish()
         }).fail(function(i) {
-  	      cb(j)
+  	      results.push([])
+          if (results.length == 3) finish()
           //body[0].innerHTML = '<tr><td>failed to run query</td><td></td><td></td><td></td></tr>';
         });
       }
       var pref = "https://bodygen.re:8081/search/"
-      getFromTracker("thepiratebay", pref, s, [], function(j) {
-        //getFromTracker("rarbg", pref, s, j, function(j) {
-          getFromTracker("iptorrents", pref, s, j, function(j) {
-            buildTable(j);
-            updateActiveTorrents()
-            
-          })
-        //})
-      })
+      
+      getFromTracker("thepiratebay", pref, s)
+      getFromTracker("rarbg", pref, s)
+      getFromTracker("iptorrents", pref, s)
         
 	}
 	

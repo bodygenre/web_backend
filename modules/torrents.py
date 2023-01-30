@@ -15,13 +15,10 @@ last_page_2 = 1
 
 
 def register(app):
-    @app.route('/last_search')
-    def last_search():
-        return jsonify({"last_query": app.last_query})
     
     @app.route('/search/<tracker>/<query>')
     def search(tracker, query):
-        app.last_query = unquote(query)
+        print("searching: ", tracker, query)
         res = []
         xml = requests.get("http://tetsuharu.ap6r0.bysh.me:48868/api/v2.0/indexers/" + tracker + "/results/torznab/?apikey=c64fc140777fbae6449cc736dc539f1d&q=" + query).content
         rss = ET.XML(xml)
@@ -76,11 +73,12 @@ def register(app):
         print("writing to .magnet file: ", data)
         f.write(data)
         f.close()
+        return "success"
     
        
     @app.route('/get_active_torrents')
     def get_active_torrents():
-        return "{}"
+        return jsonify({})
         with requests.Session() as s:
             s.post("http://tetsuharu.ap6r0.bysh.me:3385/json", json={"method": "auth.login", "id": "asdff", "params": ["friendship"] })
             #fields = ["name","download_payload_rate","eta","hash","is_finished","max_download_speed","message","paused","progress","ratio","seeds_peers_ratio","state","total_done","total_payload_download","total_size","upload_payload_rate"]

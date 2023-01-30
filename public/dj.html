@@ -1,0 +1,122 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<html>
+<head>
+	<title>Dropbox DJ</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+	<style type="text/css">
+html {
+	background-color: #272727;
+}
+body {
+	zoom: 1.5;
+}
+#blaake_resources {
+	font-family: "Roboto",arial,sans-serif;
+	background: linear-gradient(94deg, rgba(41,41,41,1) 2%, rgba(39,39,39,1) 47%, rgba(40,40,40,1) 97%);
+}
+#blaake_resources table th, #blaake_resources table td {
+	padding: 4px;
+}
+#blaake_resources h1 {
+	margin: 0 0 0 0;
+	text-align: center;
+	color: #fe8;
+    text-shadow: 0px 0px 2px #b08f26;
+	font-size: 20px;
+}
+#blaake_resources section {
+	text-align: center;
+	padding-top: 1em;
+}
+#blaake_resources section p {
+	vertical-align: top;
+	text-align: center;
+	color: #a0a0a0;
+	width: 8em;
+	display: inline-block;
+}
+#searching table {
+	background-color: #a0a0a0;
+	font-size: 0.5em;
+}
+#searching #search { width: 60%; background: transparent; border-color: #a0a0a0; color: #a0a0a0; font-size: 16px; }
+#searching #search::placeholder { color: #a0a0a0; }
+#searching table { margin-top: 1em; }
+#searching #search_btn { background-color: #a0a0a0; border: none; }
+
+#search_results img { width:100%; }
+#search_results .yt_title { color: white; }
+#search_results .yt_result { float: left; width: 200px; width: 100%; }
+
+
+iframe { display: block; margin: 0 auto; 
+		 width: 100%; resize: both; overflow: auto; border: 3px solid #222; aspect-ratio: 784 / 625; }
+	</style>
+</head>
+<body id="blaake_resources">
+<h1>Dropbox DJ</h1>
+
+<section id="searching">
+	<input id="search" autofocus placeholder="search for music" /> <button id="search_btn">Search</button>
+<section>
+
+<section id="search_results">
+</section>
+</body>
+
+<script type="text/javascript">
+
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function() {
+            var context = this, args = arguments;
+            var later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    };
+
+    function search(term) {
+        jQuery.get('https://bodygen.re:8081/dj/search/' + term).then(function(r) {
+            var html = ""
+            for (var s of r['items']) {
+                html += "<div id='" + s['id']['videoId'] + "' class='yt_result'><img src='" + s['snippet']['thumbnails']['high']['url'] + "' /><br /><span class='yt_title'>" + s['snippet']['title'] + "</span></div>"
+            }
+            jQuery('#search_results').html(html)
+            jQuery('#search_results .yt_result').click(function(ev) {
+                _id = ev.currentTarget.id
+                jQuery.get('https://bodygen.re:8081/dj/download/' + _id).then(function(){
+                    jQuery('#search').val('')
+                    jQuery('#search_results').html('')
+                })
+            })
+        })
+    }
+
+    function searchExisting(term) {
+        
+    }
+
+
+    jQuery('#search').keypress(debounce(function(e) {
+      if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+        search(jQuery('#search').val());
+        searchExisting(jQuery('#search').val());
+      }   
+    }, 250));
+    jQuery('#search_btn').click(debounce(function(e) {
+        search(jQuery('#search').val());
+        searchExisting(jQuery('#search').val());
+    }, 250))
+</script>
+</html>
+

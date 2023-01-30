@@ -7,3 +7,9 @@ pid
 current_movie_url
 kid
 kpid
+youtube_token
+hgaas.json
+**.swp
+**/**.swp
+*/*.swp
+logs/
