@@ -12,4 +12,4 @@ hgaas.json
 **.swp
 **/**.swp
 */*.swp
-logs/
+logs/*

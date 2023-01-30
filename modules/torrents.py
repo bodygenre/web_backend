@@ -6,6 +6,7 @@ import cachetools
 from urllib.parse import unquote
 import xml.etree.ElementTree as ET
 from modules import http_client
+import asyncio
 
 
 letterboxd_cache = cachetools.TTLCache(maxsize=1, ttl=5)
@@ -57,13 +58,9 @@ def register(app):
         info_hash = base64.b64decode(bytes(info_hash, 'utf-8'))
         fname = hashlib.md5(info_hash).hexdigest()
         info_hash = info_hash.decode('utf-8')
-        print("decoded info_hash: ", info_hash)
         data = ""
         if info_hash.startswith("http"):
-            print("getting http info hash: ", info_hash)
             data = await http_client.get(info_hash)
-            print("info hash data: ", data)
-            print("getting http info hash: ", data)
             f = open('/home/hd1/tetsuharu/torrents/watch/' + fname + '_http.torrent', 'wb')
             print("writing to .torrent file: ", data)
             f.write(data)

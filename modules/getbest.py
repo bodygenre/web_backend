@@ -5,11 +5,13 @@ from modules import http_client
 import urllib
 import base64
 import json
+import asyncio
+
 
 async def dosearch(tracker, q, minseeds=2):
     print("query:", tracker, q)
     try:
-        res = await http_client.get("https://bodygen.re:8081/search/" + tracker + "/" + urllib.parse.quote(q), verify=False)
+        res = await http_client.get("https://bodygen.re:8081/search/" + tracker + "/" + urllib.parse.quote(q))
         res = json.loads(res)
     except Exception as e:
         print("Search request broke:", e)
@@ -57,20 +59,27 @@ async def _getbest(query):
     with open("logs/searches", "a+") as f:
         f.write(query+"\n")
 
-    #for tracker in ["rarbg", "iptorrents"]:
-    for tracker in ["thepiratebay", "rarbg", "iptorrents"]:
+    async def test_in_order(tracker, query, minseeds=2):
         a = await dosearch(tracker, query + " 1080p")
         if a: return a
         a = await dosearch(tracker, query + " bluray")
         if a: return a
         a = await dosearch(tracker, query)
         if a: return a
-        a = await dosearch(tracker, query + " 1080p", minseeds=1)
-        if a: return a
-        a = await dosearch(tracker, query + " bluray", minseeds=1)
-        if a: return a
-        a = await dosearch(tracker, query, minseeds=1)
-        if a: return a
+        return None
+
+    #for tracker in ["rarbg", "iptorrents"]:
+    trackers = ["thepiratebay", "rarbg", "iptorrents"]
+    jobs = [ test_in_order(tracker, query) for tracker in trackers ]
+    res = await asyncio.gather(*jobs)
+    for a in res:
+        if a is not None:
+            return a
+    jobs = [ test_in_order(tracker, query, minseeds=1) for tracker in trackers ]
+    res = await asyncio.gather(*jobs)
+    for a in res:
+        if a is not None:
+            return a
 
     # TODO: refactor ^^^ to use asyncio.gather to parallelize the requests a bit
 
