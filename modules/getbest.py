@@ -41,8 +41,7 @@ async def dosearch(tracker, q, minseeds=2):
         if type(h) is str:
             h = bytes(h, 'utf-8')
         h = base64.b64encode(h)
-        #http_client.get('https://bodygen.re:8081/add_torrent/' + h.decode('utf-8'))
-        return { "success": True, "torrent_name": f"{chosen['name']} - ({chosen['leechers']} leech / {chosen['seeders']} seed) - {int(int(chosen['size'])/1073741824*100)/100}gb" }
+        return { "success": True, "torrent_name": f"{chosen['name']} - ({chosen['leechers']} leech / {chosen['seeders']} seed) - {int(int(chosen['size'])/1073741824*100)/100}gb", "info_hash": h.decode("utf-8") }
         #return jsonify({ "success": True, "torrent_name": f"{chosen['name']} - ({chosen['leechers']} leech / {chosen['seeders']} seed) - {int(int(chosen['size'])/1073741824*100)/100}gb" })
 
     return None
@@ -74,11 +73,13 @@ async def _getbest(query):
     res = await asyncio.gather(*jobs)
     for a in res:
         if a is not None:
+            await http_client.get('https://bodygen.re:8081/add_torrent/' + a['info_hash'])
             return a
     jobs = [ test_in_order(tracker, query, minseeds=1) for tracker in trackers ]
     res = await asyncio.gather(*jobs)
     for a in res:
         if a is not None:
+            await http_client.get('https://bodygen.re:8081/add_torrent/' + a['info_hash'])
             return a
 
     # TODO: refactor ^^^ to use asyncio.gather to parallelize the requests a bit
