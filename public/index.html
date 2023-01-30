@@ -8,11 +8,13 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
     <script type="text/javascript">
-      jQuery.get('/last_restart', function(rr) {
+      /*
+jQuery.get('/last_restart', function(rr) {
         setInterval(function() {
           jQuery.get('/last_restart', function(r) { if (r != rr) window.location.reload() })
         }, 5000)
       })
+*/
     </script>
 	<style type="text/css">
 html {
@@ -364,6 +366,7 @@ iframe { display: block; margin: 0 auto;
 
 	setInterval(updateVlc, 10000);
 	function updateActiveTorrents() {
+        return
 		jQuery.get('https://bodygen.re:8081/get_active_torrents').done(function(e) {
 			for (var i=0; i<e.length; i++) {
 				t = e[i];

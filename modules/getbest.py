@@ -1,13 +1,16 @@
-from flask import jsonify, request
+from quart import jsonify, request
 from urllib.parse import unquote
 import requests
+from modules import http_client
 import urllib
 import base64
+import json
 
-def dosearch(tracker, q, minseeds=2):
+async def dosearch(tracker, q, minseeds=2):
     print("query:", tracker, q)
     try:
-        res = requests.get("https://bodygen.re:8081/search/" + tracker + "/" + urllib.parse.quote(q), verify=False).json()
+        res = await http_client.get("https://bodygen.re:8081/search/" + tracker + "/" + urllib.parse.quote(q), verify=False)
+        res = json.loads(res)
     except Exception as e:
         print("Search request broke:", e)
         return None
@@ -36,13 +39,13 @@ def dosearch(tracker, q, minseeds=2):
         if type(h) is str:
             h = bytes(h, 'utf-8')
         h = base64.b64encode(h)
-        requests.get('https://bodygen.re:8081/add_torrent/' + h.decode('utf-8'), verify=False)
+        #http_client.get('https://bodygen.re:8081/add_torrent/' + h.decode('utf-8'))
         return { "success": True, "torrent_name": f"{chosen['name']} - ({chosen['leechers']} leech / {chosen['seeders']} seed) - {int(int(chosen['size'])/1073741824*100)/100}gb" }
         #return jsonify({ "success": True, "torrent_name": f"{chosen['name']} - ({chosen['leechers']} leech / {chosen['seeders']} seed) - {int(int(chosen['size'])/1073741824*100)/100}gb" })
 
     return None
 
-def _getbest(query):
+async def _getbest(query):
     # search for results
     # find one with filesize > 1g
     # choose the one with the most seeds
@@ -56,18 +59,20 @@ def _getbest(query):
 
     #for tracker in ["rarbg", "iptorrents"]:
     for tracker in ["thepiratebay", "rarbg", "iptorrents"]:
-        a = dosearch(tracker, query + " 1080p")
+        a = await dosearch(tracker, query + " 1080p")
         if a: return a
-        a = dosearch(tracker, query + " bluray")
+        a = await dosearch(tracker, query + " bluray")
         if a: return a
-        a = dosearch(tracker, query)
+        a = await dosearch(tracker, query)
         if a: return a
-        a = dosearch(tracker, query + " 1080p", minseeds=1)
+        a = await dosearch(tracker, query + " 1080p", minseeds=1)
         if a: return a
-        a = dosearch(tracker, query + " bluray", minseeds=1)
+        a = await dosearch(tracker, query + " bluray", minseeds=1)
         if a: return a
-        a = dosearch(tracker, query, minseeds=1)
+        a = await dosearch(tracker, query, minseeds=1)
         if a: return a
+
+    # TODO: refactor ^^^ to use asyncio.gather to parallelize the requests a bit
 
     # if a search failed, log it to failed log
     with open("logs/searches.failed", "a+") as f:
@@ -81,13 +86,13 @@ def _getbest(query):
 def register(app):
 
     @app.route("/getbest/<query>")
-    def getbest(query):
-        return jsonify(_getbest(query))
+    async def getbest(query):
+        return jsonify(await _getbest(query))
 
     @app.route("/getbest_twilio", methods=['GET','POST'])
-    def getbest_twilio():
+    async def getbest_twilio():
         query = request.form.get("Body", None)
-        a = _getbest(query)
+        a = await _getbest(query)
         if a['success'] == False:
             return '<?xml version="1.0" encoding="UTF-8"?><Response><Message>something went wrong, sorry. didnt download.</Message></Response>' 
         else:

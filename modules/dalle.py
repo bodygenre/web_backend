@@ -4,7 +4,7 @@ from PIL import Image
 from io import BytesIO
 import random
 import time
-from flask import send_file
+from quart import send_file
 
 def gen_images(query):
     data = {"prompt": query}
@@ -73,7 +73,7 @@ def gen_image_grid(query, retries=2):
 
 def register(app):
     @app.route('/craiyon')
-    def dalle():
+    async def dalle():
         q = request.args.get('q')
         print("dalle", q)
         img = gen_image(q)

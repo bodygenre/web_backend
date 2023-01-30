@@ -230,7 +230,7 @@ if __name__ == "__main__":
 
 def register(app):
     @app.route("/current_calendar_movie")
-    def current_calendar_movie():
+    async def current_calendar_movie():
         start, ev = calendar_playlist.get_current_event()
         if ev is None:
             return jsonify({ "movie_name": None, "offset": 0 })
@@ -239,7 +239,7 @@ def register(app):
     
     
     @app.route("/current_calendar_movie_names")
-    def current_calendar_movie_names():
+    async def current_calendar_movie_names():
         names = calendar_playlist.get_movie_names_between(
             datetime.datetime.now(timezone.utc),
             datetime.datetime.now(timezone.utc) + timedelta(days=8)

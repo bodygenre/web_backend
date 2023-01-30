@@ -1,17 +1,18 @@
-from flask import jsonify, request
+from quart import jsonify, request
 
 import urllib
-import requests
+from modules import http_client
 import re
-
+import json
 
 def register(app):
 
     @app.route('/imdb_info')
-    def imdb_info():
+    async def imdb_info():
         q = request.args.get('q')
         url = f"https://v3.sg.media-imdb.com/suggestion/titles/x/{urllib.parse.quote(q)}.json"
-        r = requests.get(url).json()
+        r = await http_client.get(url)
+        r = json.loads(r)
         d = r['d'][0]
         movie_id = d['id']
         movie_title = d['l']
@@ -19,11 +20,10 @@ def register(app):
         imgurl = d['i']['imageUrl']
         movie_url = f"https://www.imdb.com/title/{movie_id}/"
         
-        r2 = requests.get(movie_url, headers={"User-Agent": "chrome"})
+        r2 = await http_client.get(movie_url, headers={"User-Agent": "chrome"})
 
         rating = None
-        for line in r2.iter_lines():
-          line = line.decode("utf-8")
+        for line in r2.decode("utf-8").split("\n"):
           if "ratingValue" in line:
             line = line.split("ratingValue\":")[1][0:50]
             rating = float(line.split("}")[0])

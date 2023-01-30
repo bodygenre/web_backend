@@ -1,4 +1,4 @@
-from flask import jsonify
+from quart import jsonify
 
 import requests
 import datetime
@@ -42,7 +42,7 @@ letterboxd_pages = []
 
 def register(app):
     @app.route("/nilbog_seen")
-    def nilbog_seen():
+    async def nilbog_seen():
         # get last page
         # add any missing movies
         # if the last page number has changed, add those

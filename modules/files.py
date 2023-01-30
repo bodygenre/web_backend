@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from quart import request, jsonify
 
 import requests
 import glob
@@ -10,7 +10,7 @@ def register(app):
     
     
     @app.route('/search_existing/<terms>')
-    def search_existing(terms):
+    async def search_existing(terms):
         #files = glob.glob('/home/hd1/tetsuharu/media/B Movies/**') + glob.glob('/home/hd1/tetsuharu/media/Movies/**') + glob.glob('/home/hd1/tetsuharu/media/TV Shows/**')
         files = glob.glob('/home/hd1/tetsuharu/media/B Movies/*/*') + glob.glob('/home/hd1/tetsuharu/media/Movies/*/*') + glob.glob('/home/hd1/tetsuharu/media/TV Shows/**/**/*')
         files = [ f.replace('/home/hd1/tetsuharu/media/','') for f in files if 'Plex Versions' not in f ]
@@ -23,7 +23,7 @@ def register(app):
     
     
     @app.route('/move_movie')
-    def move_movie():
+    async def move_movie():
         fro = request.args.get('from')
         to = request.args.get('to')
         if not (to.startswith("B Movies/") or to.startswith("Movies/") or to.startswith("TV Shows/")):
@@ -42,7 +42,7 @@ def register(app):
     
     
     @app.route('/make_download_link')
-    def make_download_link():
+    async def make_download_link():
       path = request.args.get('path')
       if not re.match(r"^(B Movies|Movies|TV Shows)/.+", path):
         return

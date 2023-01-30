@@ -1,5 +1,4 @@
-from flask import jsonify
-from flask_cors import CORS
+from quart import jsonify
 
 import urllib
 import re
@@ -17,7 +16,7 @@ vlc_cache = cachetools.TTLCache(maxsize=1, ttl=1)
 def register(app):
 
     @app.route('/stream_movie')
-    def stream_movie():
+    async def stream_movie():
         path = request.args.get('path')
         path = urllib.parse.unquote(path)
         if '../' in path:
@@ -29,7 +28,7 @@ def register(app):
 
 
     @app.route('/vlc/<action>')
-    def vlc_action(action):
+    async def vlc_action(action):
       if action == 'current':
         if 'vlc/current' in vlc_cache:
           return vlc_cache['vlc/current']
@@ -57,7 +56,7 @@ def register(app):
     
     
     @app.route('/post_vlc_status')
-    def post_vlc_status():
+    async def post_vlc_status():
         movie_file = request.args.get('file')
         movie_file = urllib.parse.unquote(movie_file).lower()
         current_movie_file = movie_file
@@ -75,7 +74,7 @@ def register(app):
         return ""
     
     @app.route("/get_current_movie")
-    def get_current_movie():
+    async def get_current_movie():
         return open("current_movie_url").read().strip()
     
     
